@@ -4,6 +4,7 @@ import com.ai.chat.pojo.Relation;
 import com.ai.chat.pojo.User;
 import com.ai.chat.service.MsgService;
 import com.ai.chat.service.UserService;
+import com.ai.chat.util.RedisUtil;
 import com.ai.chat.util.SendCodeUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.gson.JsonObject;
@@ -29,6 +30,11 @@ public class UserController {
     @Resource(name = "msgServiceImpl")
     private MsgService msgService;
     String rsKey = "result";
+    @Resource
+    private SendCodeUtil sendCodeUtil;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     /**
      * 注册controller
@@ -90,8 +96,10 @@ public class UserController {
      * @return
      */
     @GetMapping("jumpToChat/{id}")
-    public ModelAndView chat(@PathVariable String id) {
+    public ModelAndView chat(@PathVariable String id , @RequestParam String token) {
         ModelAndView mav = service.chat(id);
+        //保存token
+        mav.addObject("token",token);
         //获取好友邀请信息
         mav.addObject("reqList", msgService.getReq(id));
         mav.setViewName("chat");
@@ -150,7 +158,7 @@ public class UserController {
     }
     @RequestMapping("getUserByPhone/{phone}")
     public String getUserByPhone(@PathVariable String phone) {
-        return (service.getUserByPhone(phone) ? "yes" : "no");
+        return (service.getUserByPhone(phone)!= null ? "yes" : "no");
     }
 
     @RequestMapping("getInfo/{id}")
@@ -170,10 +178,16 @@ public class UserController {
     }
     @RequestMapping("sendCode")
     public String sendCode(@RequestParam String userPhone,HttpSession session ) {
-        //调用发送验证码的方法
-        String code = SendCodeUtil.send(userPhone);
         //创建json对象
         JsonObject json = new JsonObject();
+        // 获取用户信息
+        User user = service.getUserByPhone(userPhone);
+        if (user == null){
+            json.addProperty(rsKey,"no");
+            return json.toString();
+        }
+        //调用发送验证码的方法
+        String code = sendCodeUtil.send(userPhone);
         if (code == null) {
             System.out.println("发送失败");
             //作出响应  json数据
@@ -181,24 +195,8 @@ public class UserController {
             json.addProperty("result", "no");
         } else {
             System.out.println("发送成功");
-            //设置验证码的有效期
-            //将服务器中的验证码存储起来   session
-            session.setAttribute("code", code);
-            //当过了有效期，将存储的验证码删除
-            //在固定时间后，删除session中的验证码  Timer
-            //创建计时器
-            Timer timer = new Timer();
-            //执行计时器五分钟后删除session的验证码
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    //删除session中的验证码
-                    session.removeAttribute("code");
-                    System.out.println("验证码已失效");
-                    //取消计时器
-                    timer.cancel();
-                }
-            }, 1000 * 60 * 5);
+            //将服务器中的验证码存储起来
+            redisUtil.cacheCode(user.getId(),code);
             json.addProperty("result", "yes");
         }
         return json.toString();
@@ -217,7 +215,7 @@ public class UserController {
     }
     @RequestMapping("changePW")
     public String changerPW(@RequestParam String code,User user,HttpSession session){
-        return service.changePW(code,user,session);
+        return service.changePW(user,code,session);
     }
 
 }

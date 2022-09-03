@@ -68,7 +68,7 @@
             </li>
         </c:if>
         <c:if test="${!empty user}">
-            <li>
+            <li onclick="parent.frames['bottom'].showProfile()" style="cursor: pointer">
                 <img id="avatar" alt="image" class="img-circle" style="margin-top: 4px;border-radius: 50px"
                 <c:if test="${!empty user.avatarUrl}"> src="${user.avatarUrl}"
                 </c:if>
@@ -76,32 +76,28 @@
                      src="${pageContext.request.contextPath}/image/portrait/img.jpg" </c:if> width=25 height=25>
             </li>
             <li>
-                <font style="color: #FFFFFF; font-size: 13px;margin-top: 1px">
+                <font style="color: #FFFFFF; font-size: 13px;margin-top: 1px;cursor: pointer" onclick="parent.frames['bottom'].showProfile()">
                     <font style="color: #fc6b0e;text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;">
-                            ${user.name}
+                            ${user.nickname}
                     </font>
                 </font>
-                <span class="welcome">
+                <span class="welcome" onclick="parent.location.reload()" style="cursor: pointer">
                     <font class="offline">离线</font>
                 </span><!--文字可以使用span标签放置-->
-            </li>
-            <li>
-                <i class="fas fa-user-edit"></i>
-                <a href="#" onclick="parent.frames['bottom'].showProfile()">个人中心</a>
             </li>
         </c:if>
     </ul>
     <ul class="top-nav-right">
-        <li>
-            <i class="fas fa-question-circle"></i>
-            <a onclick="parent.frames['bottom'].help()" style="cursor: pointer"> 帮助</a>
-        </li>
         <c:if test="${!empty user}">
             <li>
                 <i class="fas fa-sign-out-alt"></i>
                 <a onclick="quit()" style="cursor: pointer">安全退出</a>
             </li>
         </c:if>
+        <li>
+            <i class="fas fa-question-circle"></i>
+            <a onclick="parent.frames['bottom'].help()" style="cursor: pointer"> 联系我们</a>
+        </li>
     </ul>
 </div>
 <script>

@@ -180,17 +180,6 @@ public class AdminServiceImpl implements AdminService{
      * @param admin
      * @return
      */
-    @Override
-    public ModelAndView queryAdmin(Admin admin) {
-        try {
-            List<Admin> admins = adminMapper.queryAll(admin);
-            mav.addObject("admins", admins);
-        }catch (Exception e){
-            mav.addObject("error",e.getCause().toString());
-            e.printStackTrace();
-        }
-        return mav;
-    }
 
     @Override
     public ModelAndView queryAdmin1(Admin admin) {

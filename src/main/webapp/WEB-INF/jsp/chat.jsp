@@ -8,6 +8,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%
+    String token = request.getParameter("token");//用request得到
+    request.setAttribute("token",token);
+%>
 <html>
 <head>
     <title></title>
@@ -147,7 +151,29 @@
     </div>
 </div>
 <!-- ./ Disconnected modal -->
-
+<!-- Add friends modal -->
+<div class="modal fade" id="help" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-zoom" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i data-feather="help-circle" class="mr-2"></i> 联系我们
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="ti-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    GROUP:创新AI<br>
+                    Email:lcodndks@163.com<br>
+                    QQ:2465636144
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ./ Add friends modal -->
 <!-- Add friends modal -->
 <div class="modal fade" id="addFriends" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-zoom" role="document">
@@ -387,7 +413,7 @@
                             </div>
                             <div class="form-group">
                                 <div class="form-item custom-control custom-switch">
-                                    <input type="checkbox" class="custom-control-input" checked=""
+                                    <input type="checkbox" class="custom-control-input"
                                            id="customSwitch12">
                                     <label class="custom-control-label" for="customSwitch12">Mute</label>
                                 </div>
@@ -498,7 +524,7 @@
         <!-- Chat -->
         <iframe width="100%" class="chat" id="chatFrame" name="chatFrame" height="100%"
                 <c:if test="${!empty friends}">
-                    src="${pageContext.request.contextPath}/user/link/${user.id}/${friends[0].id2}"
+                    src="${pageContext.request.contextPath}/user/link/${user.id}/${friends[0].id2}?token=${token}"
                 </c:if>
                 <c:if test="${empty friends}">
                     srcdoc="<p>添加一个好友吧!</p>"
@@ -533,7 +559,7 @@
             return;
         }
         $.ajax({
-            url: "${pageContext.request.contextPath}/user/update",
+            url: "${pageContext.request.contextPath}/user/update?token=${token}",
             type: "post",
             data: {"password": userPassword, "id": '${id}'},
             success: function (resp) {
@@ -556,7 +582,7 @@
 
 
     function linkTo(id) {
-        document.getElementById("chatFrame").src = '${pageContext.request.contextPath}/user/link/${user.id}/' + id;
+        document.getElementById("chatFrame").src = '${pageContext.request.contextPath}/user/link/${user.id}/' + id + '?token=${token}';
 
     }
 
@@ -591,7 +617,7 @@
         })
     })
     $(function () {
-        $.get("${pageContext.request.contextPath}/user/getUnread/${user.id}", function (data) {
+        $.get("${pageContext.request.contextPath}/user/getUnread/${user.id}?token=${token}", function (data) {
             var obj = JSON.parse(data);
             for (let o in obj) {
                 $(".id2").each(function () {
@@ -606,12 +632,12 @@
                         return;
                     }
                 })
-                if (${!empty reqList}) {
-                    $("#mail_icon").css("color", "red")
-                    <c:forEach items="${reqList}" var="r">
-                    addReq('${r.fromId}', '${r.msg.trim()}', '${r.sendTime}')
-                    </c:forEach>
-                }
+            }
+            if (${!empty reqList}) {
+                $("#mail_icon").css("color", "red")
+                <c:forEach items="${reqList}" var="r">
+                addReq('${r.fromId}', '${r.msg.trim()}', '${r.sendTime}')
+                </c:forEach>
             }
         })
     })
@@ -642,8 +668,8 @@
         //隐藏邀请
         $(".list-group-item-" + id).hide();
         //设为已读
-        $.get('${pageContext.request.contextPath}/user/isRead/' + id + '/${user.id}')
-        $.get("${pageContext.request.contextPath}/user/addF/${user.id}/" + id, function (data) {
+        $.get('${pageContext.request.contextPath}/user/isRead/' + id + '/${user.id}?token=${token}')
+        $.get("${pageContext.request.contextPath}/user/addF/${user.id}/" + id + "?token=${token}", function (data) {
             if (data === "yes") {
                 layer.msg("添加成功", {icon: 1})
             } else {
@@ -660,11 +686,11 @@
         //隐藏邀请
         $(".list-group-item-" + id).hide();
         //设为已读
-        $.get('${pageContext.request.contextPath}/user/isRead/' + id + '/${user.id}')
+        $.get('${pageContext.request.contextPath}/user/isRead/' + id + '/${user.id}?token=${token}')
     }
 
     function showProfile() {
-        $.get("${pageContext.request.contextPath}/user/getInfo/${user.id}", function (resp) {
+        $.get("${pageContext.request.contextPath}/user/getInfo/${user.id}?token=${token}", function (resp) {
             var r = JSON.parse(resp);
             $("#userNickname").val(r.nickname);
             if (r.sex === 'f') {
@@ -674,15 +700,19 @@
             }
             $("#age").val(r.age);
             $("#phone").val(r.phone);
-            $("#userAvatar").attr("src", r.avatarUrl);
-            $("#id").html("ID:"+r.id);
-            $("#username").html("用户名:"+r.name);
+            if (r.avatarUrl === "") {
+                $("#userAvatar").attr("src", "${pageContext.request.contextPath}/image/portrait/img.jpg");
+            } else {
+                $("#userAvatar").attr("src", r.avatarUrl);
+            }
+            $("#id").html("ID:" + r.id);
+            $("#username").html("用户名:" + r.name);
         })
         $('#editProfileModal').modal('show')
     }
 
     function fProfile(id) {
-        $.get("${pageContext.request.contextPath}/user/getInfo/" + id, function (resp) {
+        $.get("${pageContext.request.contextPath}/user/getInfo/" + id + "?token=${token}", function (resp) {
             var r = JSON.parse(resp);
             $("#fNickname").html(r.nickname);
             if (r.sex === 'f') {
@@ -693,7 +723,11 @@
             $("#fAge").html(r.age);
             $("#fId").html(r.id);
             $("#fPhone").html(r.phone);
-            $("#fAvatar").attr("src", r.avatarUrl);
+            if (r.avatarUrl === "") {
+                $("#fAvatar").attr("src", "${pageContext.request.contextPath}/image/portrait/img.jpg");
+            } else {
+                $("#fAvatar").attr("src", r.avatarUrl);
+            }
             var time = new Date();
             time.setTime(r.lastLoginTime);
             $("#fLastLogin").html("上次登录: " + time);
@@ -702,7 +736,7 @@
     }
 
     function commit() {
-        $.post("${pageContext.request.contextPath}/user/update",
+        $.post("${pageContext.request.contextPath}/user/update?token=${token}",
             $("#updateInfo").serializeArray(),
             function (resp) {
                 if (resp === "yes") {
@@ -723,7 +757,7 @@
             var localhostPath = window.document.location.href.substring(0, window.document.location.href.indexOf(window.document.location.pathname));
             $.ajax({
                 type: 'post',
-                url: localhostPath + "${pageContext.request.contextPath}/user/uploadAvatar", //上传文件的请求路径必须是绝对路径
+                url: localhostPath + "${pageContext.request.contextPath}/user/uploadAvatar?token=${token}", //上传文件的请求路径必须是绝对路径
                 data: formData,
                 cache: false,
                 processData: false,
@@ -791,6 +825,11 @@
         })
     })
 
+    function help() {
+        $("#help").modal("show");
+
+    }
+
     function f() {
         var canvas = document.getElementById('canvas'),  //获取canvas元素
             context = canvas.getContext('2d'),  //获取画图环境，指明为2d
@@ -845,9 +884,5 @@
         })
     })
 </script>
-
-
-</div>
-</div>
 </body>
 </html>

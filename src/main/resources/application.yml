@@ -1,3 +1,7 @@
 spring:
   profiles:
     active: dev
+sms:
+  regionId: cn-qingdao
+  accessKeyId: LTAI4G29eFjgKFPDUYFMSkUM
+  secret: jVJOurME74scJHP3wN9zMnb5ygXMp2

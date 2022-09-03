@@ -1,6 +1,11 @@
 package com.ai.chat.pojo;
 
-public class Message {
+import java.io.Serializable;
+
+public class Message implements Serializable {
+
+    private static final long serialVersionUID = -8985545025228238754L;
+
     private String fromId;
     private String toId;
     private String msg;

@@ -1,7 +1,11 @@
 package com.ai.chat.controller;
 
+import com.ai.chat.mapper.MsgMapper;
+import com.ai.chat.mapper.UserLogMapper;
 import com.ai.chat.pojo.Admin;
+import com.ai.chat.pojo.Message;
 import com.ai.chat.pojo.User;
+import com.ai.chat.pojo.UserLog;
 import com.ai.chat.service.AdminService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +16,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author aoufgo
@@ -23,6 +28,10 @@ public class AdminController {
 
     @Resource(name = "adminServiceImpl")
     AdminService adminService;
+    @Resource
+    private MsgMapper msgMapper;
+    @Resource
+    private UserLogMapper userLogMapper;
 
     String rsKey = "result";
 
@@ -134,17 +143,6 @@ public class AdminController {
         mav.setViewName("admin/adminLogin");
         return mav;
     }
-    /**
-     * 查询全部管理员
-     *
-     * @return
-     */
-    @RequestMapping("queryAdmin")
-    public ModelAndView queryAdmin(Admin admin) {
-        ModelAndView mav = adminService.queryAdmin(admin);
-        mav.setViewName("admin/adminManage");
-        return mav;
-    }
 
     @RequestMapping("queryAdmin1")
     public ModelAndView queryAdmin1(Admin admin) {
@@ -169,7 +167,7 @@ public class AdminController {
         } else {
             mav.addObject("type", 4);
         }
-        mav.setViewName("redirect:/admin/queryAdmin");
+        mav.setViewName("redirect:/admin/queryAdmin1");
         return mav;
 
     }
@@ -202,14 +200,14 @@ public class AdminController {
         } else {
             mav.addObject("type", 6);
         }
-        mav.setViewName("redirect:/admin/queryAdmin");
+        mav.setViewName("redirect:/admin/queryAdmin1");
         return mav;
 
     }
 
     @RequestMapping("insertAdmin")
     public ModelAndView insertAdmin(Admin admin) {
-        admin.setStatus(1);
+        admin.setStatus(200);
         admin.setRoleId(2);
         ModelAndView mav = adminService.register(admin);
         rsKey = "result";
@@ -218,7 +216,28 @@ public class AdminController {
         } else {
             mav.addObject("type", 2);
         }
-        mav.setViewName("redirect:/admin/queryAdmin");
+        mav.setViewName("redirect:/admin/queryAdmin1");
         return mav;
+    }
+
+    @RequestMapping("getMsg")
+    public ModelAndView getMsg() {
+        List<Message> msgs = msgMapper.query(new Message());
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("msgs", msgs);
+        mav.setViewName("admin/msgList");
+        return mav;
+    }
+    @RequestMapping("getUserLog")
+    public ModelAndView getUserLog() {
+        List<UserLog> logs = userLogMapper.queryAllLog();
+        ModelAndView mav = new ModelAndView();
+        mav.addObject("logs", logs);
+        mav.setViewName("admin/userLogList");
+        return mav;
+    }
+    @RequestMapping("quit")
+    public void quit(HttpSession session) {
+        session.removeAttribute("admin");
     }
 }

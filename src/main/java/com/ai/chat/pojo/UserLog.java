@@ -1,19 +1,21 @@
 package com.ai.chat.pojo;
 
-public class Log {
+/**
+ * @author aoufgo
+ * @date 2021/5/10 下午10:22
+ */
+public class UserLog {
     private int logId;
-    private int adminId;
+    private String userId;
     private String operation;
-    private String status;
     private String createTime;
 
     @Override
     public String toString() {
-        return "Log{" +
+        return "UserLog{" +
                 "logId=" + logId +
-                ", adminId=" + adminId +
+                ", userId='" + userId + '\'' +
                 ", operation='" + operation + '\'' +
-                ", status='" + status + '\'' +
                 ", createTime='" + createTime + '\'' +
                 '}';
     }
@@ -26,12 +28,12 @@ public class Log {
         this.logId = logId;
     }
 
-    public int getAdminId() {
-        return adminId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setAdminId(int adminId) {
-        this.adminId = adminId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getOperation() {
@@ -42,14 +44,6 @@ public class Log {
         this.operation = operation;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public String getCreateTime() {
         return createTime;
     }
@@ -58,14 +52,10 @@ public class Log {
         this.createTime = createTime;
     }
 
-    public Log(int logId, int adminId, String operation, String status, String createTime) {
+    public UserLog(int logId, String userId, String operation, String createTime) {
         this.logId = logId;
-        this.adminId = adminId;
+        this.userId = userId;
         this.operation = operation;
-        this.status = status;
         this.createTime = createTime;
-    }
-
-    public Log() {
     }
 }

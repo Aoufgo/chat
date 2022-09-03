@@ -19,4 +19,5 @@ public class Md5Util {
         byte[] b2 = DigestUtils.md5(pass);
         return DigestUtils.md5Hex(b2);
     }
+
 }

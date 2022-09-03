@@ -7,18 +7,17 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<script src="${pageContext.request.contextPath}/static/plugin/layui/layui.all.js"></script>
 <script src="${pageContext.request.contextPath}/static/js/jquery.min63b9.js?v=2.1.4"></script>
 <script src="${pageContext.request.contextPath}/static/js/bootstrap.min14ed.js?v=3.3.6"></script>
 <script src="${pageContext.request.contextPath}/static/js/jquery.metisMenu.js"></script>
 <script src="${pageContext.request.contextPath}/static/js/jquery.slimscroll.min.js"></script>
-<script src="${pageContext.request.contextPath}/static/js/layer/layer.min.js"></script>
 <script src="${pageContext.request.contextPath}/static/js/hplus.min862f.js?v=4.1.0"></script>
 <script src="${pageContext.request.contextPath}/static/js/contabs.min.js"></script>
 <script src="${pageContext.request.contextPath}/static/js/pace.min.js"></script>
-<script src="${pageContext.request.contextPath}/static/js/layui.all.js"></script>
 <script src="${pageContext.request.contextPath}/static/js/fkjava_timer.js"></script>
 <link href="${pageContext.request.contextPath}/static/css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
-<link href="${pageContext.request.contextPath}/static/css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet">
+<link href="${pageContext.request.contextPath}/static/plugin/fontawesome/css/all.css" rel="stylesheet">
 <link href="${pageContext.request.contextPath}/static/css/animate.min.css" rel="stylesheet">
 <link href="${pageContext.request.contextPath}/static/css/all.css" rel="stylesheet">
 
@@ -68,100 +67,67 @@
             <ul class="nav" id="side-menu" style="overflow: hidden">
                 <li class="nav-header">
                     <div class="dropdown profile-element">
-                        <span style="height: 97px;width: 170px"><img alt="image" class="img-circle" style="margin-left: 47.5px" src="${pageContext.request.contextPath}/image/1.jpg" width=75 height=75></span>
+                        <span style="height: 97px;width: 170px"><img alt="image" class="img-circle" style="margin-left: 47.5px" src="${pageContext.request.contextPath}/image/portrait/img.jpg" width=75 height=75></span>
                         <div style="height: 20px"></div>
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-<%--                            <c:if test="${admin.roleId==2}">--%>
+                            <c:if test="${admin.roleId==2}">
                                 <span class="clear">
-                                    <span class="text-muted text-xs block" style="text-align: center"><font style="color:#ff2a2b;font-size: 16px;">超级管理员${admin.adminName}++${admin.roleId}</font></span>
+                                    <span class="text-muted text-xs block" style="text-align: center"><font style="color:#ff2a2b;font-size: 16px;">管理员${admin.adminName}</font></span>
                                 </span>
-<%--                            </c:if>--%>
+                            </c:if>
                             <c:if test="${admin.roleId==1}">
                                 <span class="clear">
                                     <span class="text-muted text-xs block" style="text-align: center"><font style="color:#f8ac59;font-size: 16px;">超级管理员${admin.adminName}</font></span>
                                 </span>
                             </c:if>
                         </a>
-
-                        <ul class="dropdown-menu animated fadeInDown m-t-xs">
-                            <li><a class="J_menuItem"   id="adminMsg" ><font style="font-size: 14px">管理员信息管理</font></a>
-                                <script>
-                                    $("#adminMsg").click(function (){
-                                        var roleId= '${admin.roleId}';
-                                        console.log(roleId)
-                                        if (roleId ==='0'){
-                                            window.location="${pageContext.request.contextPath}/admin/queryAdmin"
-                                        }else {
-                                            layer.msg("你没有权限查看管理员信息",{icon:0})
-                                        }
-                                    })
-                                </script>
-                            </li>
-                            <li class="divider"></li>
-                            <li><a  href="login?method=delete&adminId=${admin.adminId}&tp=ac"><font style="font-size: 14px">安全退休</font></a>
-                            </li>
-                        </ul>
                     </div>
                 </li>
-
+                <c:if test="${admin.roleId==1}">
                 <li>
-<%--                    <a href="#">--%>
-<%--                        <i class="fa fa-user"></i>--%>
-<%--                        <span class="nav-label">用户管理</span>--%>
-<%--                        <span class="fa arrow"></span>--%>
-<%--                    </a>--%>
+                    <a href="#">
+                        <i class="fa fa-user-cog"></i>
+                        <span class="nav-label">管理员管理</span>
+                        <span class="fa arrow"></span>
+                    </a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a class="J_menuItem"   href="${pageContext.request.contextPath}/admin/queryAdmin">管理员信息</a>
+                            <a class="J_menuItem" href="${pageContext.request.contextPath}/admin/queryAdmin1" data-index="0">管理员查询</a>
                         </li>
+                    </ul>
+                </li>
+                </c:if>
+
+                <li>
+                    <a href="#">
+                        <i class="fa fa-user"></i>
+                        <span class="nav-label">用户管理</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level">
                         <li>
                             <a class="J_menuItem" href="${pageContext.request.contextPath}/admin/queryUser" data-index="0">用户查询</a>
                         </li>
                         <li>
                             <a class="J_menuItem" href="${pageContext.request.contextPath}/admin_page/userAdd">用户添加</a>
                         </li>
-
                     </ul>
                 </li>
-
-<%--                <li>--%>
-<%--                    <a href="#">--%>
-<%--                        <i class="fa fa-book-open" style="margin-right:4px;margin-left:-2px"></i>--%>
-<%--                        <span class="nav-label">书籍管理</span>--%>
-<%--                        <span class="fa arrow"></span>--%>
-<%--                    </a>--%>
-<%--                    <ul class="nav nav-second-level">--%>
-<%--                        <li>--%>
-<%--                            <a class="J_menuItem" href="book?method=queryAll1" data-index="0">书籍管理</a>--%>
-<%--                        </li>--%>
-<%--                        <li>--%>
-<%--                            <a class="J_menuItem" href="book?method=addBook" data-index="0">书籍添加</a>--%>
-<%--                        </li>--%>
-<%--                        <li>--%>
-<%--                            <a class="J_menuItem" href="bookshelf?method=queryAllBookshelf" data-index="0">书架管理</a>--%>
-<%--                        </li>--%>
-<%--                        <li>--%>
-<%--                            <a class="J_menuItem" href="borrow?method=queryAllBorrow" data-index="0">借阅查询</a>--%>
-<%--                        </li>--%>
-<%--                        <li>--%>
-<%--                            <a class="J_menuItem" href="sold?method=queryAllSold" data-index="0">售书情况</a>--%>
-<%--                        </li>--%>
-<%--                    </ul>--%>
-<%--                </li>--%>
-
                 <li>
-<%--                    <a href="#">--%>
-<%--                        <i class="fa fa-clipboard-list" style="margin-right: 7px;margin-left: 1px"></i>--%>
-<%--                        <span class="nav-label">日志管理</span>--%>
-<%--                        <span class="fa arrow"></span>--%>
-<%--                    </a>--%>
+                    <a href="#">
+                        <i class="fa fa-clipboard-list" style="margin-right:4px;margin-left:-2px"></i>
+                        <span class="nav-label">日志管理</span>
+                        <span class="fa arrow"></span>
+                    </a>
                     <ul class="nav nav-second-level">
                         <li>
-                            <a class="J_menuItem" href="${pageContext.request.contextPath}/log/queryAll" data-index="0">查看日志</a>
+                            <a class="J_menuItem" href="${pageContext.request.contextPath}/admin/getMsg" data-index="0">信息查询</a>
+                        </li>
+                        <li>
+                            <a class="J_menuItem" href="${pageContext.request.contextPath}/admin/getUserLog" data-index="0">用户日志</a>
                         </li>
                     </ul>
                 </li>
-
             </ul>
         </div>
     </nav>
@@ -195,15 +161,14 @@
             <a href="login?method=quit" onclick="quitAdmin()" class="roll-nav roll-right J_tabExit"><i class="fa fa fa-sign-out"></i> 退出</a>
             <script>
                 function  quitAdmin(){
-                    layer.msg('退出成功', {icon: 1});
-                    setTimeout("window.location = 'book?method=queryAll&type=6'", 800);
+                    $.get("${pageContext.request.contextPath}/admin/quit");
                 }
             </script>
 
         </div>
 
         <div class="row J_mainContent" id="content-main">
-            <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="book?method=queryAll1" frameborder="0"
+            <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="${pageContext.request.contextPath}/admin/queryUser" frameborder="0"
                     data-id=""  seamless></iframe>
         </div>
     </div>

@@ -10,6 +10,9 @@ import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 
@@ -21,27 +24,22 @@ import org.springframework.stereotype.Component;
  * @author aoufgo
  */
 @Component
+@ConfigurationProperties(prefix = "sms")
 public class SendCodeUtil {
-    /**
-     * 生成六位验证码
-     */
-    public static String randomCode() {
-        String code = "";
-        while (true) {
-            int f = (int) (Math.random() * 10);
-            if (f != 0) {
-                code += f;
-                break;
-            }
-        }
-        int i = 1;
-        while (i <= 5) {
-            //生成0-9的整数
-            int n = (int) (Math.random() * 10);
-            code += n;
-            i++;
-        }
-        return code;
+    private String regionId;
+    private String accessKeyId;
+    private String secret;
+
+    public void setRegionId(String regionId) {
+        this.regionId = regionId;
+    }
+
+    public void setAccessKeyId(String accessKeyId) {
+        this.accessKeyId = accessKeyId;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
     }
 
     /**
@@ -49,8 +47,8 @@ public class SendCodeUtil {
      * @param userPhone 手机
      * @return 返回验证码，如果返回位null，表示发送失败，否则成功
      */
-    public static String send(String userPhone){
-        DefaultProfile profile = DefaultProfile.getProfile("cn-qingdao", "LTAI4G29eFjgKFPDUYFMSkUM", "jVJOurME74scJHP3wN9zMnb5ygXMp2");
+    public String send(String userPhone){
+        DefaultProfile profile = DefaultProfile.getProfile(regionId,accessKeyId,secret);
         IAcsClient client = new DefaultAcsClient(profile);
 
         CommonRequest request = new CommonRequest();
@@ -62,6 +60,7 @@ public class SendCodeUtil {
         request.putQueryParameter("PhoneNumbers", userPhone);
         request.putQueryParameter("SignName", "ABC商城");
         request.putQueryParameter("TemplateCode", "SMS_206750054");
+        request.setMethod(MethodType.POST);
 
         //随机生成6位数验证码
         String code = randomCode();
@@ -87,4 +86,26 @@ public class SendCodeUtil {
         }
         return null;
     }
+    /**
+     * 生成六位验证码
+     */
+    public static String randomCode() {
+        String code = "";
+        while (true) {
+            int f = (int) (Math.random() * 10);
+            if (f != 0) {
+                code += f;
+                break;
+            }
+        }
+        int i = 1;
+        while (i <= 5) {
+            //生成0-9的整数
+            int n = (int) (Math.random() * 10);
+            code += n;
+            i++;
+        }
+        return code;
+    }
+
 }

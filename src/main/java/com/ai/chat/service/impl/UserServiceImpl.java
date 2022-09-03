@@ -9,9 +9,11 @@ import com.ai.chat.pojo.User;
 import com.ai.chat.util.FaceUtil;
 import com.ai.chat.util.GenerateIdUtil;
 import com.ai.chat.util.Md5Util;
+import com.ai.chat.util.RedisUtil;
 import com.alibaba.fastjson.JSON;
 import com.google.gson.JsonObject;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.tomcat.util.buf.UDecoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,13 +27,14 @@ import java.util.*;
  * @author aoufgo
  */
 @Service
-
 public class UserServiceImpl implements UserService {
     @Resource(name = "userMapper")
     private UserMapper mapper;
     @Resource
     private RelaMapper relaMapper;
     ModelAndView mav = new ModelAndView();
+    @Resource
+    private RedisUtil redisUtil;
 
 
     @Override
@@ -61,17 +64,13 @@ public class UserServiceImpl implements UserService {
             //md5加密
             String password = Md5Util.md5(user.getPassword());
             user.setPassword(password);
-            if (mapper.queryByNP(user) == null) {
+            user = mapper.queryByNP(user);
+            if (user == null) {
                 mav.addObject("result", false);
             } else {
-                //将user对象存入session域对象
-                user = mapper.queryById(user.getId());
-                session.setAttribute("user", user);
-                //获取时间
-                User user1 = new User();
-                user1.setLastLoginTime(new Date().getTime()+"");
-                user1.setId(user.getId());
-                mapper.update(user1);
+                // 保存信息
+                String token =  saveLoginUserInfo(user,session);
+                mav.addObject("token",token);
                 mav.addObject("result", true);
             }
         } catch (Exception e) {
@@ -84,30 +83,24 @@ public class UserServiceImpl implements UserService {
     public ModelAndView codeLogin(String code, String phone, HttpSession session) {
         ModelAndView mav = new ModelAndView();
         try {
-            //校验验证码
-            String code1 = (String) session.getAttribute("code");
-            if (code1 == null || !code1.equals(code)) {
-                //验证码不正确
-                mav.addObject("type", 5);
+            //查询是否有该手机号
+            User user = mapper.queryByPhone(phone);
+            if (user == null) {
+                //手机号错误
+                mav.addObject("type", 2);
             } else {
-                //查询是否有该手机号
-                User user = mapper.queryByPhone(phone);
-                if (user == null) {
-                    //手机号错误
-                    mav.addObject("type", 2);
+                // 获取验证码
+                String code1 = redisUtil.getVerificationCode(user.getId());
+                if (code1 == null || !code1.equals(code)) {
+                    //验证码不正确
+                    mav.addObject("type", 5);
                 } else {
                     //登录成功
-                    //将user对象存入session域对象
-                    user = mapper.queryById(user.getId());
-                    session.setAttribute("user", user);
-                    //获取时间
-                    User user1 = new User();
-                    user1.setLastLoginTime(new Date().getTime()+"");
-                    user1.setId(user.getId());
-                    mapper.update(user1);
+                    // 保存信息
+                    String token =  saveLoginUserInfo(user,session);
+                    mav.addObject("token",token);
                     mav.addObject("type", 4);
                 }
-
             }
         } catch (Exception e) {
             mav.addObject("error", e.getCause().toString());
@@ -124,22 +117,18 @@ public class UserServiceImpl implements UserService {
         //拿要登录的人脸信息与每一个用户的人脸对比
         //假设登陆失败
         boolean checkFace = false;
+        String token = "";
         //遍历每一个人用户信息
         for (User u : list) {
-            String facePath = "/Volumes/MacData/faceImgs/" + u.getName() + ".jpg";
+            String facePath = "/Volumes/mac-data/faceImgs/" + u.getName() + ".jpg";
             //拿要登录的人脸信息与每一个用户的人脸对比
             if (u.getAccStatus() == 200 && u.getFaceUrl() != null && !u.getFaceUrl().equals("")) {
                 //拿登录的人脸与每一个用户的人脸对比，看是否为同一个人
                 checkFace = FaceUtil.checkFace(img, facePath);
                 if (checkFace) {
                     //如果结果为true
-                    //将该对象存储到session
-                    //获取时间
-                    User user1 = new User();
-                    user1.setLastLoginTime(new Date().getTime()+"");
-                    user1.setId(u.getId());
-                    mapper.update(user1);
-                    session.setAttribute("user", u);
+                    // 保存信息
+                    token = saveLoginUserInfo(u,session);
                     break;
                 }
             }
@@ -148,6 +137,7 @@ public class UserServiceImpl implements UserService {
         JsonObject jsonObject = new JsonObject();
         if (checkFace) {
             jsonObject.addProperty("msg", "登录成功");
+            jsonObject.addProperty("token", token);
         } else {
             jsonObject.addProperty("msg", "没有查询到人脸信息，或账号禁止登录");
         }
@@ -178,8 +168,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean getUserByPhone(String phone) {
-        return mapper.queryByPhone(phone) != null;
+    public User getUserByPhone(String phone) {
+        return mapper.queryByPhone(phone);
     }
 
     @Override
@@ -210,7 +200,7 @@ public class UserServiceImpl implements UserService {
             // 获取文件的后缀名
             String suffixName = fileName.substring(fileName.lastIndexOf("."));
             // 设置文件存储路径
-            String filePath = "/Volumes/MacData/chatAvatar/";
+            String filePath = "/Volumes/mac-data/chatAvatar/";
             // 用uuid给新文件命名
             String fileUUName = UUID.randomUUID().toString();
             String path = filePath + fileUUName + suffixName;
@@ -232,7 +222,7 @@ public class UserServiceImpl implements UserService {
     public String faceRegister(String img, HttpSession session) {
         JsonObject jsonObject = new JsonObject();
         try {
-            String facePath = "/Volumes/MacData/faceImgs/";
+            String facePath = "/Volumes/mac-data/faceImgs/";
             //根据要存储的目录file对象
             File file = new File(facePath);
             //检查目录是否存在
@@ -274,7 +264,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String changePW(String code, User user, HttpSession session) {
+    public String changePW( User user, String code,HttpSession session) {
         //校验验证码
         String code1 = (String) session.getAttribute("code");
         if (code1 == null || !code1.equals(code)) {
@@ -289,6 +279,17 @@ public class UserServiceImpl implements UserService {
                 return mapper.update(user) > 0 ? "修改成功" : "修改失败";
             }
         }
+    }
+
+    private String saveLoginUserInfo(User user,HttpSession session){
+        // 缓存token
+        String token = redisUtil.cacheToken(user.getId());
+        // 更新时间
+        user.setLastLoginTime(System.currentTimeMillis() + "");
+        mapper.update(user);
+        //将user对象存入session域对象
+        session.setAttribute("user", user);
+        return token;
     }
 }
 

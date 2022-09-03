@@ -26,8 +26,8 @@
             border:0px;
         }
         .btn-primary:hover{
-            background-color: #c10606;
-            border-color: #c10606;
+            background-color: #c10606 !important;
+            border-color: #c10606 !important;
         }
         .input_text{
             width:200px;

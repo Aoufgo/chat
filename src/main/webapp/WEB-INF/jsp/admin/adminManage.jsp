@@ -6,48 +6,19 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
     <title>管理员查询</title>
     <style>
-        .input_sub{
-            color:white;
-            width:80px;
-            height: 30px;
-            background: #61b464;
-            border:0px;
+        .bth-bor:hover {
+            background-color: #ab8052 !important;
+            border-color: #ab8052 !important;
         }
-        .input_sub1{
-            color:white;
-            width:60px;
-            height: 30px;
-            background: #d55854;
-            border:0px;
-        }
-        .input_sub2{
-            color:white;
-            width:120px;
-            height: 30px;
-            background: #61b464;
-            border:0px;
-        }
-        .input_text{
-            width:200px;
-            height: 30px;
-            border:2px solid green;
-            /*清除掉默认的padding*/
-            padding:0px;
 
-            /*提示字首行缩进*/
-            text-indent: 10px;
-
-            /*去掉蓝色高亮框*/
-            outline: none;}
-
-        .btn-primary:hover{
-            background-color: #c10606;
-            border-color: #c10606;
+        .btn-primary:hover {
+            background-color: #c10606 !important;
+            border-color: #c10606 !important;
         }
     </style>
 </head>
@@ -85,59 +56,41 @@
 <body style="text-align: center">
 <div class="row" style="width: 80%;margin: 0 auto">
     <div class="col-sm-12" style="padding: 0">
-        <div class="ibox float-e-margins animate__animated animate__fadeInUp animate__faster">
+        <div class="ibox float-e-margins animate__animated  animate__faster animate__fadeIn">
             <div class="ibox-title">
                 <h3>管理员信息&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</h3>
 
-                <form  action="${pageContext.request.contextPath}/admin/queryAdmin" method="post">
-                    <div style="float:right" class="col-sm-3">
-                        <div class="input-group"> <span class="input-group-btn">
-                            <input  type="submit" class="btn btn-sm btn-primary"  value="返回列表"></span>
-                        </div>
-                    </div>
-                </form>
-
+                <%--                        <div style="float: left"><button style="float: left" type="button" class="btn btn-sm bth-bor" onclick="layer.open({--%>
+                <div>
+                    <button style="float:left" type="button" class="btn btn-sm bth-bor" onclick="layer.open({
+                            type:2,
+                            title:['添加管理员','text-align:center;font-size:20px'],
+                            area:['800px','500px'],
+                            shade:0.6,
+                            maxmin:true,
+                            content:'${pageContext.request.contextPath}/admin_page/adminAdd'
+                            })">添加管理员
+                    </button>
+                </div>
                 <div class="ibox-tools">
-                    <form align="center" action="${pageContext.request.contextPath}/admin/queryAdmin1" method="post" >
-<%--                        <div style="float: left"><button style="float: left" type="button" class="btn btn-sm bth-bor" onclick="layer.open({--%>
-    <div ><button style="float:left"  type="button" class="btn btn-sm bth-bor" onclick="layer.open({
-
-            type:2,
-            // title:['添加管理员','text-align:center;font-size:20px'],
-            title:['添加管理员','text-align:center;font-size:20px'],
-
-            // area:['800px','500px'],
-            shade:0.6,
-            // maxmin:true,
-            content:'${pageContext.request.contextPath}/admin_page/adminAdd'
-        })">添加管理员</button>
-    </div>
+                    <form align="center" action="${pageContext.request.contextPath}/admin/queryAdmin1" method="post">
+                    <div class="input-group" style="float: left;display: inline">
+                        <input type="text" placeholder="请输入用户名" class="input-sm form-control" name="adminName"
+                               id="adminName">
+                        <input type="text" placeholder="状态:200(正常)100(异常)" class="input-sm form-control" name="status"
+                               id="status">
+                    </div>
                         <div style="float: right" class="col-sm-3">
+
                             <div class="input-group">
-                                <input type="text" placeholder="请输入管理员编号" class="input-sm form-control" name="adminId" id="adminId1"> <span class="input-group-btn">
-                                <input  type="submit" class="btn btn-sm btn-primary" value="搜索"> 搜索</input> </span>
+                                <input type="text" placeholder="请输入管理员编号" class="input-sm form-control" name="adminId"
+                                       id="adminId1"> <span class="input-group-btn">
+                                <input type="submit" class="btn btn-sm btn-primary" value="搜索"> 搜索</input> </span>
                             </div>
 
                         </div>
                     </form>
                 </div>
-                    <form  action="${pageContext.request.contextPath}/admin/queryAdmin1" method="post" id="search">
-                        <div style="float: right" class="col-sm-3">
-                            <div class="input-group">
-                            <input type="text" placeholder="请输入用户名" class="input-sm form-control" name="adminName" id="adminName"><span class="input-group-btn">
-                            <input  type="submit" class="btn btn-sm btn-primary"  value="搜索"></span>
-                            </div>
-                        </div>
-                    </form>
-                <form  action="${pageContext.request.contextPath}/admin/queryAdmin1" method="post">
-                    <div style="float: right" class="col-sm-3">
-                        <div class="input-group">
-                            <input type="text" placeholder="状态:1(正常)2(异常)" class="input-sm form-control" name="status" id="status"> <span class="input-group-btn">
-                                <input  type="submit" class="btn btn-sm btn-primary" value="搜索">查询状态</input> </span>
-                        </div>
-                    </div>
-                </form>
-
             </div>
             <div class="ibox-content">
                 <div class="table-responsive">
@@ -166,14 +119,14 @@
                                 <td>${admin.roleId}</td>
                                 <td>
                                     <a href="${pageContext.request.contextPath}/admin/delAdmin?adminId=${admin.adminId}">退休</a>
-<%--                                    <a onclick="layer.open({--%>
-<%--                                            type:2,--%>
-<%--                                            title:['修改信息','text-align:center;font-size:20px'],--%>
-<%--                                            area:['800px','500px'],--%>
-<%--                                            shade:0.6,--%>
-<%--                                            maxmin:true,--%>
-<%--                                            content:'${pageContext.request.contextPath}/admin/getAdmin?adminId=${admin.adminId}'--%>
-<%--                                            })">修改信息</a>--%>
+                                        <%--                                    <a onclick="layer.open({--%>
+                                        <%--                                            type:2,--%>
+                                        <%--                                            title:['修改信息','text-align:center;font-size:20px'],--%>
+                                        <%--                                            area:['800px','500px'],--%>
+                                        <%--                                            shade:0.6,--%>
+                                        <%--                                            maxmin:true,--%>
+                                        <%--                                            content:'${pageContext.request.contextPath}/admin/getAdmin?adminId=${admin.adminId}'--%>
+                                        <%--                                            })">修改信息</a>--%>
                                     <a type="button" style="cursor: pointer;" onclick="layer.open({
                                             type:2,
                                             title:['修改管理员信息','text-align:center;font-size:20px'],
@@ -190,40 +143,40 @@
                 </div>
 
             </div>
-        </div >
+        </div>
     </div>
 </div>
 </body>
 <script>
-    var a=${param.type};
-    if (a==0){
-        layer.msg("添加失败",{icon:2})
+    var a =${param.type};
+    if (a == 0) {
+        layer.msg("添加失败", {icon: 2})
     }
-    if (a==1){
-        layer.msg("添加成功",{icon:1})
+    if (a == 1) {
+        layer.msg("添加成功", {icon: 1})
     }
-    if (a==2){
-        layer.msg("充值失败",{icon:2})
+    if (a == 2) {
+        layer.msg("充值失败", {icon: 2})
     }
-    if (a==3){
-        layer.msg("充值成功",{icon:1})
+    if (a == 3) {
+        layer.msg("充值成功", {icon: 1})
     }
-    if (a==4){
-        layer.msg("删除失败",{icon:2})
+    if (a == 4) {
+        layer.msg("删除失败", {icon: 2})
     }
-    if (a==5){
-        layer.msg("删除成功",{icon:1})
+    if (a == 5) {
+        layer.msg("删除成功", {icon: 1})
     }
-    if (a==6){
-        layer.msg("修改失败",{icon:2})
+    if (a == 6) {
+        layer.msg("修改失败", {icon: 2})
     }
-    if (a==7){
-        layer.msg("修改成功",{icon:1})
+    if (a == 7) {
+        layer.msg("修改成功", {icon: 1})
     }
-    if (a==8){
-        layer.msg("登录成功",{icon:1})
+    if (a == 8) {
+        layer.msg("登录成功", {icon: 1})
     }
-    if (${!empty error}){
+    if (${!empty error}) {
         layer.msg("${error}")
     }
 </script>

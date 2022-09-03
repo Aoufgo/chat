@@ -1,6 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<html>
+<%
+    String token = request.getParameter("token");//用request得到
+    request.setAttribute("token",token);
+%>
+    <html>
 <head>
     <title>AiChat</title>
     <link rel="icon" href="${pageContext.request.contextPath}/image/icon/favicon.png" type="image/png">
@@ -9,7 +13,7 @@
     <frame src="top" name="topFrame" noresize="noresize" scrolling="no">
     <frame src=
            <c:if test='${!empty user}'>
-                   '${pageContext.request.contextPath}/user/jumpToChat/${user.id}'
+                   '${pageContext.request.contextPath}/user/jumpToChat/${user.id}?token=${token}'
             </c:if>
             <c:if test="${empty user}">
                 'show'

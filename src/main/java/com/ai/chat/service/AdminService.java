@@ -14,7 +14,6 @@ import javax.servlet.http.HttpSession;
  * @author aoufgo
  * @date 2021/4/5 下午4:28
  */
-@Service
 public interface AdminService {
 
     /**
@@ -73,12 +72,6 @@ public interface AdminService {
      */
     ModelAndView register(Admin admin);
 
-    /**
-     * 查询管理员
-     * @param admin
-     * @return
-     */
-    ModelAndView queryAdmin(Admin admin);
 
     ModelAndView queryAdmin1(Admin admin);
 

@@ -14,7 +14,6 @@ import java.io.IOException;
  * @author aoufgo
  * @date 2021/4/2 下午4:32
  */
-@Service
 public interface UserService {
     /**
      * 注册用户
@@ -65,7 +64,7 @@ public interface UserService {
      * @param phone 手机号
      * @return 是否存在手机号
      */
-    Boolean getUserByPhone(String phone);
+    User getUserByPhone(String phone);
 
     /**
      * 判断用户名是否重复
@@ -115,7 +114,7 @@ public interface UserService {
      * @param session s
      * @return 结果
      */
-    String changePW(String code,User user,HttpSession session);
+    String changePW(User user,String code,HttpSession session);
 
 
 

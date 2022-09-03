@@ -10,7 +10,6 @@ import java.util.Map;
 /**
  * @author guoao
  */
-@Service
 public interface MsgService {
     /**
      * 添加信息记录
@@ -46,7 +45,7 @@ public interface MsgService {
      * @param id 用户id
      * @return 用户好友对应的未读消息数
      */
-    List<Map<String,Integer>> getUnread(String id);
+    List<Map<String,String>> getUnread(String id);
     /**
      * 获取用户的未读好友邀请
      * @param id 用户Id

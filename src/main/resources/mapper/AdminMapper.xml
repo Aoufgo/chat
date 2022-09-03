@@ -18,19 +18,16 @@
     <select id="queryById" parameterType="int" resultType="com.ai.chat.pojo.Admin">
         select * from `admin` where adminId = #{adminId}
     </select>
-    <select id="queryAll" parameterType="com.ai.chat.pojo.Admin" resultType="com.ai.chat.pojo.Admin">
-        select * from `admin`
-    </select>
     <select id="query" parameterType="com.ai.chat.pojo.Admin" resultType="com.ai.chat.pojo.Admin">
         select * from `admin`
         <where>
-            <if test="adminId != null and adminId !=''">
+            <if test="adminId != null and adminId !=0">
                 and adminId = #{adminId}
             </if>
             <if test="adminName != null and adminName !=''">
                 and adminName like CONCAT('%','${adminName}','%')
             </if>
-            <if test="status != null and status !=''">
+            <if test="status != null and status !=0">
                 and status = #{status}
             </if>
         </where>
@@ -56,10 +53,10 @@
             <if test="adminPassword != null and adminPassword != ''">
                 adminPassword  = #{adminPassword},
             </if>
-            <if test="status != null and status != ''">
+            <if test="status != null and status != 0">
                 status = #{status},
             </if>
-            <if test="roleId != null and roleId != ''">
+            <if test="roleId != null and roleId != 0">
                 roleId = #{roleId},
             </if>
             <if test="adminLoginTime != null and adminLoginTime = ''">

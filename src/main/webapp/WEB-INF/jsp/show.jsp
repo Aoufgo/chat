@@ -302,7 +302,7 @@
                 <div class="col-md-3 col-sm-6">
                     <h4 class="mg-md text-sm-left text-center">
                         About
-                    </h4><a href="index.html" class="a-btn a-block footer-link">AI人工智能</a><a href="index.html"
+                    </h4><a href="index.html" class="a-btn a-block footer-link">创新AI</a><a href="index.html"
                                                                                              class="a-btn a-block footer-link link-padding"><span
                         class="special-tag-for-editing-text-with-html"></span></a>
                 </div>

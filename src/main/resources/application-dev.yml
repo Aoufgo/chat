@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     username: root
-    password: asd123456
+    password: 12345678
     url: jdbc:mysql://localhost:3306/chatdemo?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC&allowMultiQueries=true
     driver-class-name: com.mysql.cj.jdbc.Driver
   mvc:
@@ -16,8 +16,14 @@ spring:
     static-path-pattern: /static/**
   web:
     resources:
-      static-locations: classpath:/static/, file:/Volumes/MacData/chatAvatar
+      static-locations: classpath:/static/, file:/Volumes/mac-data/chatAvatar
 
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+  main:
+    sources:
 
 mybatis:
   #config-location: classpath:mapper/MyBatisConfig.xml
@@ -26,6 +32,7 @@ mybatis:
   #控制台打印mybatis执行的sql语句
 #  configuration:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
 
 
 

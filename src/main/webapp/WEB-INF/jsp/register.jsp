@@ -34,7 +34,7 @@
         .register_div{
             border-radius: .5rem;
             background-color:white;
-            width:500px;
+            width:430px;
             height:810px;
             z-index:2;
             display: block;
